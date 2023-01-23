@@ -75,7 +75,7 @@
 
         <script type="text/javascript">
 
-            //var disliked = liked = false;
+            var dislike_b = like_b = false;
 
             var num1 = 0;
             var like = parseInt("{{post.like_votes}}");
@@ -85,11 +85,17 @@
 
             function likeHandler() {
                 const xhr = new XMLHttpRequest();
+
+                if (dislike_b == true){
+                    dislikeHandler();
+                    //dislike_b = false ;
+                }
                 
                 // like iterator
                 like = like + (-1)**num1 ;
                 num1 = (num1 + 1)%2;
                 document.getElementById("like").innerHTML = like;
+                like_b = !like_b;
 
                 console.log( like , num1);
 
@@ -117,11 +123,16 @@
 
             function dislikeHandler() {
                 const xhr2 = new XMLHttpRequest();
+
+                if (like_b == true){
+                    likeHandler();
+                }
                 
                 // like iterator
                 dislike = dislike + (-1)**num2 ;
                 num2 = (num2 + 1)%2;
                 document.getElementById("dislike").innerHTML = dislike;
+                dislike_b = !dislike_b;
 
                 console.log( dislike , num1);
 
