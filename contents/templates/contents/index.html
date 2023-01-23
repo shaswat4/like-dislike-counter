@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+
+    <style>
+        .list {
+            border-style: groove;
+            border-radius: 5px;
+            margin: 25px 50% 10px 10px;
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    {% if latest_post_list %}
+    <ul>
+        {% for post in latest_post_list %}
+        <li class="list">{{ post.post_text }}</li>
+        <button type="button" id="likebtn" class="btn btn-primary">like : <xyz id="like"> {{post.like_votes}} </xyz>
+        </button>
+        <button type="button" id="dislikebtn" class="btn btn-danger">dislikes : <xyz id="dislike">
+                {{post.dislike_votes}} </xyz></button>
+        </br>
+
+        <script type="text/javascript">
+
+            var liked = false;
+            var disliked = false ;
+
+            var likebtn = document.getElementById("likebtn");
+            likebtn.addEventListener('click', buttonClikckHandler);
+            var num1 = 1;
+            var like = parseInt("{{post.like_votes}}");
+            var new_l = like;
+
+            var dislikebtn = document.getElementById("dislikebtn");
+            dislikebtn.addEventListener('click', buttonClikckHandler2);
+            var num2 = 1;
+            var dislike = parseInt("{{post.dislike_votes}}");
+            var new_dl = dislike;
+
+            function buttonClikckHandler() {
+                console.log("clicked like");
+
+                const xhr = new XMLHttpRequest();
+                
+                liked = true;
+                new_l = like + num1 % 2;
+                num1 = num1 + 1;
+                document.getElementById("like").innerHTML = new_l;
+
+                var catid;
+                catid = $(this).attr("data-catid");
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/likepost/",
+                        data: {
+                            post_id: catid , 
+                            votes : new_l ,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+
+                        },
+                        success: function (data) {
+                            $('#like' + catid).remove();
+                            $('#message').text(data);
+                        }
+                    })
+
+
+                console.log(new_l, num1);
+
+
+
+            }
+            
+
+           
+
+            function buttonClikckHandler2() {
+                console.log("clicked dislike");
+
+                const xhr2 = new XMLHttpRequest();
+
+
+                new_dl = dislike + num2 % 2;
+                num2 = num2 + 1;
+                document.getElementById("dislike").innerHTML = new_dl;
+                
+                dislike = true;
+                var catid;
+                catid = $(this).attr("data-catid");
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/dislikepost/",
+                        data: {
+                            post_id: catid , 
+                            votes : new_dl ,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+
+                        },
+                        success: function (data) {
+                            $('#dislike' + catid).remove();
+                            $('#message').text(data);
+                        }
+                    })
+
+
+                console.log(new_dl, num2);
+
+
+            }
+
+        </script>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No polls are available.</p>
+    {% endif %}
+
+
+
+
+</body>
+
+</html>
