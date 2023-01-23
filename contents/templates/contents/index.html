@@ -69,93 +69,76 @@
         <li class="list">{{ post.post_text }}</li>
         <button type="button" id="likebtn" class="btn btn-primary" onclick="likeHandler()">like : <xyz id="like"> {{post.like_votes}} </xyz>
         </button>
-        <button type="button" id="dislikebtn" class="btn btn-danger" onclick="dislikekHandler()">dislikes : <xyz id="dislike">
+        <button type="button" id="dislikebtn" class="btn btn-danger" onclick="dislikeHandler()">dislikes : <xyz id="dislike">
                 {{post.dislike_votes}} </xyz></button>
         </br>
 
         <script type="text/javascript">
 
-            var disliked = liked = false;
+            //var disliked = liked = false;
 
-            var num1 = 1;
+            var num1 = 0;
             var like = parseInt("{{post.like_votes}}");
-            var new_l = like;
 
             var num2 = 1;
             var dislike = parseInt("{{post.dislike_votes}}");
             var new_dl = dislike;
 
             function likeHandler() {
-                console.log("clicked like");
-
                 const xhr = new XMLHttpRequest();
                 
-                liked = true;
-                new_l = like + (num1%2);
-                num1 = num1 + 1;
-                document.getElementById("like").innerHTML = new_l;
+                // like iterator
+                like = like + (-1)**num1 ;
+                num1 = (num1 + 1)%2;
+                document.getElementById("like").innerHTML = like;
 
-                var catid;
-                catid = $(this).attr("data-catid");
+                console.log( like , num1);
+
+                //var catid;
+                //catid = $(this).attr("data-catid");
                 $.ajax(
                     {
                         type: "POST",
                         url: "/likepost/",
                         data: {
-                            post_id: catid , 
-                            votes : new_l ,
+                            //post_id: catid , 
+                            votes : like ,
                             csrfmiddlewaretoken: '{{ csrf_token }}'
-
                         },
                         success: function (data) {
-                            $('#like' + catid).remove();
+                            //$('#like' + catid).remove();
                             $('#message').text(data);
                         }
                     })
-
-
-                console.log(new_l, num1);
-
-
+                
 
             }
             
 
-           
 
-            function dislikekHandler() {
-                console.log("clicked dislike");
-
-                const xhr = new XMLHttpRequest();
-
-                console.log(new_dl, num2);
-                new_dl = dislike + (num2%2);
-                console.log(new_dl, num2);
-                num2 = num2 + 1;
-                document.getElementById("dislike").innerHTML = new_dl;
+            function dislikeHandler() {
+                const xhr2 = new XMLHttpRequest();
                 
-                dislike = true;
-                var catid;
-                catid = $(this).attr("data-catid");
+                // like iterator
+                dislike = dislike + (-1)**num2 ;
+                num2 = (num2 + 1)%2;
+                document.getElementById("dislike").innerHTML = dislike;
+
+                console.log( dislike , num1);
+
                 $.ajax(
                     {
                         type: "POST",
                         url: "/dislikepost/",
                         data: {
-                            post_id: catid , 
-                            votes : new_dl ,
+                            votes : dislike ,
                             csrfmiddlewaretoken: '{{ csrf_token }}'
-
                         },
                         success: function (data) {
-                            $('#like' + catid).remove();
                             $('#message').text(data);
                         }
                     })
-
-
-                console.log(new_dl, num2);
-
+                
 
             }
 
