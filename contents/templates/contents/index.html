@@ -67,36 +67,31 @@
     <ul>
         {% for post in latest_post_list %}
         <li class="list">{{ post.post_text }}</li>
-        <button type="button" id="likebtn" class="btn btn-primary">like : <xyz id="like"> {{post.like_votes}} </xyz>
+        <button type="button" id="likebtn" class="btn btn-primary" onclick="likeHandler()">like : <xyz id="like"> {{post.like_votes}} </xyz>
         </button>
-        <button type="button" id="dislikebtn" class="btn btn-danger">dislikes : <xyz id="dislike">
+        <button type="button" id="dislikebtn" class="btn btn-danger" onclick="dislikekHandler()">dislikes : <xyz id="dislike">
                 {{post.dislike_votes}} </xyz></button>
         </br>
 
         <script type="text/javascript">
 
-            var liked = false;
-            var disliked = false ;
+            var disliked = liked = false;
 
-            var likebtn = document.getElementById("likebtn");
-            likebtn.addEventListener('click', buttonClikckHandler);
             var num1 = 1;
             var like = parseInt("{{post.like_votes}}");
             var new_l = like;
 
-            var dislikebtn = document.getElementById("dislikebtn");
-            dislikebtn.addEventListener('click', buttonClikckHandler2);
             var num2 = 1;
             var dislike = parseInt("{{post.dislike_votes}}");
             var new_dl = dislike;
 
-            function buttonClikckHandler() {
+            function likeHandler() {
                 console.log("clicked like");
 
                 const xhr = new XMLHttpRequest();
                 
                 liked = true;
-                new_l = like + num1 % 2;
+                new_l = like + (num1%2);
                 num1 = num1 + 1;
                 document.getElementById("like").innerHTML = new_l;
 
@@ -128,13 +123,14 @@
 
            
 
-            function buttonClikckHandler2() {
+            function dislikekHandler() {
                 console.log("clicked dislike");
 
-                const xhr2 = new XMLHttpRequest();
+                const xhr = new XMLHttpRequest();
 
-
-                new_dl = dislike + num2 % 2;
+                console.log(new_dl, num2);
+                new_dl = dislike + (num2%2);
+                console.log(new_dl, num2);
                 num2 = num2 + 1;
                 document.getElementById("dislike").innerHTML = new_dl;
                 
@@ -152,7 +148,7 @@
 
                         },
                         success: function (data) {
-                            $('#dislike' + catid).remove();
+                            $('#like' + catid).remove();
                             $('#message').text(data);
                         }
                     })
